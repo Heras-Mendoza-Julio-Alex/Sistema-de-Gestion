@@ -1,0 +1,85 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white text-center py-3 rounded-top-4">
+          <h4 class="mb-0 fw-bold"><i class="bi bi-box-seam me-2"></i>Nuevo Producto</h4>
+        </div>
+
+        <div class="card-body p-4">
+          <form [formGroup]="anadir" (ngSubmit)="registrar()">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Nombre del Producto</label>
+              <input
+                type="text"
+                formControlName="nombre"
+                class="form-control rounded-3"
+                [class.is-invalid]="anadir.get('nombre')?.touched && anadir.get('nombre')?.invalid"
+              />
+              <div class="invalid-feedback">El nombre es obligatorio (mín. 2 caracteres).</div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">Precio</label>
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input
+                    type="number"
+                    formControlName="precio"
+                    class="form-control"
+                    [class.is-invalid]="
+                      anadir.get('precio')?.touched && anadir.get('precio')?.invalid
+                    "
+                  />
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">Stock Inicial</label>
+                <input
+                  type="number"
+                  formControlName="stock"
+                  class="form-control"
+                  [class.is-invalid]="anadir.get('stock')?.touched && anadir.get('stock')?.invalid"
+                />
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Imagen del Producto (Opcional)</label>
+              <input
+                type="file"
+                accept="image/*"
+                class="form-control"
+                (change)="onFileSelected($event)"
+              />
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm"
+                [disabled]="anadir.invalid || cargando"
+              >
+                @if (cargando) {
+                  <span class="spinner-border spinner-border-sm me-2"></span> Guardando...
+                } @else {
+                  <i class="bi bi-plus-circle me-1"></i> Agregar Producto
+                }
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-light rounded-pill fw-bold"
+                [routerLink]="['/productos']"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

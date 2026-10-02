@@ -1,0 +1,182 @@
+<div class="container mt-4">
+  <div class="card shadow-sm border-0 rounded-4">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <button
+          class="btn btn-light rounded-pill me-3 shadow-sm px-3"
+          [routerLink]="['/tickets']"
+          title="Regresar"
+        >
+          <i class="bi bi-arrow-left me-1"></i>Regresar
+        </button>
+
+        <h4 class="mb-0 fw-bold text-dark">
+          <i class="bi bi-people me-2 text-primary"></i>Lista de Usuarios
+        </h4>
+      </div>
+    </div>
+
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th class="ps-4">Nombre Completo</th>
+              <th>Correo Electrónico</th>
+              <th>Rol</th>
+              <th class="text-center pe-4">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of usuarios(); track user.idUsuario) {
+              <tr>
+                <td class="ps-4">
+                  <span class="fw-bold text-primary">{{ user.nombre }}</span>
+                  <div class="small text-muted">
+                    {{ user.apellidoPaterno }} {{ user.apellidoMaterno }}
+                  </div>
+                </td>
+                <td>{{ user.email }}</td>
+                <td>
+                  <span
+                    class="badge rounded-pill shadow-sm"
+                    [ngClass]="user.Rol.idRol === 1 ? 'bg-danger text-white' : 'bg-info text-dark'"
+                  >
+                    {{ user.Rol.nombre || 'Sin Rol' }}
+                  </span>
+                </td>
+                <td class="text-center pe-4">
+                  <button
+                    class="btn btn-sm btn-outline-secondary border-0 rounded-circle me-1 shadow-sm-hover"
+                    title="Editar"
+                    (click)="prepararEdicion(user)"
+                  >
+                    <i class="bi bi-pencil-square fs-6"></i>
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="text-center py-5">
+                  @if (cargando()) {
+                    <div class="spinner-border text-primary mb-2" role="status"></div>
+                    <p class="mb-0 text-muted">Obteniendo datos de Oracle...</p>
+                  } @else {
+                    <i class="bi bi-person-exclamation fs-1 text-muted"></i>
+                    <p class="mt-2 mb-0">No se encontraron usuarios registrados.</p>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="modalUsuario"
+  tabindex="-1"
+  aria-labelledby="modalUsuarioLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header bg-dark text-white rounded-top-4 py-3">
+        <h5 class="modal-title fw-bold" id="modalUsuarioLabel">
+          <i class="bi bi-person-gear me-2 text-primary"></i>Editar Usuario
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <form [formGroup]="usuarioForm">
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-secondary">NOMBRE(S)</label>
+            <input
+              type="text"
+              formControlName="nombre"
+              class="form-control rounded-3 shadow-sm"
+              [class.is-invalid]="
+                usuarioForm.get('nombre')?.invalid && usuarioForm.get('nombre')?.touched
+              "
+            />
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label small fw-bold text-secondary">AP. PATERNO</label>
+              <input
+                type="text"
+                formControlName="apellidoPaterno"
+                class="form-control rounded-3 shadow-sm"
+                [class.is-invalid]="
+                  usuarioForm.get('apellidoPaterno')?.invalid &&
+                  usuarioForm.get('apellidoPaterno')?.touched
+                "
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label small fw-bold text-secondary">AP. MATERNO</label>
+              <input
+                type="text"
+                formControlName="apellidoMaterno"
+                class="form-control rounded-3 shadow-sm"
+                [class.is-invalid]="
+                  usuarioForm.get('apellidoMaterno')?.invalid &&
+                  usuarioForm.get('apellidoMaterno')?.touched
+                "
+              />
+            </div>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label small fw-bold text-secondary">ROL DEL SISTEMA</label>
+            <select
+              formControlName="idRol"
+              class="form-select rounded-3 shadow-sm border-light-subtle"
+            >
+              <option [value]="null" disabled>Seleccione un rol...</option>
+
+              @for (rol of roles(); track rol.idRol) {
+                <option [value]="rol.idRol">
+                  {{ rol.nombre }}
+                </option>
+              }
+            </select>
+
+            <div class="form-text mt-2">
+              <i class="bi bi-info-circle me-1"></i>
+              Listado dinámico obtenido desde el catálogo de roles.
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer border-0 p-4 pt-0">
+        <button
+          type="button"
+          class="btn btn-light rounded-pill px-4 fw-bold"
+          data-bs-dismiss="modal"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm"
+          (click)="actualizar()"
+          [disabled]="usuarioForm.invalid"
+        >
+          <i class="bi bi-check2-circle me-1"></i> Guardar Cambios
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

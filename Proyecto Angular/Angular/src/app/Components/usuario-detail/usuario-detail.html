@@ -1,0 +1,427 @@
+@if (usuario$ | async; as usuario) {
+  <div class="container-fluid py-5 bg-light min-vh-100">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <div class="card border-0 shadow-sm rounded-4 p-4">
+            <h3 class="text-center fw-bold mb-4">Información Usuario</h3>
+
+            <div class="text-center mb-5">
+              <div class="position-relative d-inline-block">
+                <img
+                  [src]="
+                    usuario.imagen
+                      ? 'data:image/png;base64,' + usuario.imagen
+                      : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNT31I-b-Jdf8bjPM-mm-V1qCpb-oudRLvtw&s'
+                  "
+                  alt="Imagen usuario"
+                  style="width: 150px; height: 150px; object-fit: cover"
+                />
+              </div>
+              <div class="mt-2">
+                <input
+                  type="file"
+                  #fotoInput
+                  style="display: none"
+                  accept="image/*"
+                  (change)="onFotoSelected($event, usuario.idUsuario)"
+                />
+
+                <button
+                  class="btn btn-outline-secondary btn-sm rounded-pill px-3"
+                  (click)="fotoInput.click()"
+                >
+                  <i class="bi bi-camera me-1"></i> Cambiar Foto
+                </button>
+              </div>
+            </div>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label fw-bold small">Nombre</label>
+                <input
+                  type="text"
+                  class="form-control bg-white"
+                  [value]="usuario.nombre"
+                  readonly
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-bold small">Apellido Paterno</label>
+                <input
+                  type="text"
+                  class="form-control bg-white"
+                  [value]="usuario.apellidoPaterno"
+                  readonly
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-bold small">Apellido Materno</label>
+                <input
+                  type="text"
+                  class="form-control bg-white"
+                  [value]="usuario.apellidoMaterno"
+                  readonly
+                />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold small">Username</label>
+                <input
+                  type="text"
+                  class="form-control bg-white"
+                  [value]="usuario.username"
+                  readonly
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold small">Sexo</label>
+                <input type="text" class="form-control bg-white" [value]="usuario.sexo" readonly />
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-bold small">Correo</label>
+                <input
+                  type="email"
+                  class="form-control bg-white"
+                  [value]="usuario.email"
+                  readonly
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-bold small">Teléfono</label>
+                <input
+                  type="text"
+                  class="form-control bg-white"
+                  [value]="usuario.telefono"
+                  readonly
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-bold small">Celular</label>
+                <input
+                  type="text"
+                  class="form-control bg-white"
+                  [value]="usuario.celular"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="text-center mt-2">
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#modalEditUsuario"
+              >
+                Editar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+            <h3 class="text-center fw-bold mb-4">Dirección(es)</h3>
+
+            <div class="table-responsive">
+              <table class="table table-hover align-middle border-top">
+                <thead class="table-light">
+                  <tr>
+                    <th class="small text-muted text-uppercase">Calle</th>
+                    <th class="small text-muted text-uppercase">N. Interior</th>
+                    <th class="small text-muted text-uppercase">N. Exterior</th>
+                    <th class="small text-muted text-uppercase text-center">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (dir of usuario.Direcciones; track dir.idDireccion) {
+                    <tr>
+                      <td>
+                        <span class="fw-medium">{{ dir.calle }}</span>
+                      </td>
+                      <td>{{ dir.numeroInterior || 'S/N' }}</td>
+                      <td>{{ dir.numeroExterior }}</td>
+                      <td>
+                        <div class="d-flex justify-content-center gap-2">
+                          <button
+                            class="btn btn-warning btn-sm shadow-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalEditDireccion"
+                            (click)="buscarDireccion(dir.idDireccion)"
+                          >
+                            <i class="bi bi-pencil-square me-1"></i> Editar
+                          </button>
+                          <button
+                            class="btn btn-danger btn-sm shadow-sm"
+                            (click)="deleteDireccion(usuario.idUsuario, dir.idDireccion)"
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <div class="text-center mt-4">
+              <button
+                class="btn btn-secondary px-4 py-2 rounded-3 shadow-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#modalEditDireccion"
+                (click)="direccionSubject.next(null)"
+              >
+                Agregar Dirección
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="text-center">
+          <button [routerLink]="['/']" class="btn btn-outline-secondary btn-lg px-5 shadow-sm">
+            <i class="bi bi-arrow-left me-2"></i>Regresar al inicio
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Usuario-->
+  <div class="modal fade" id="modalEditUsuario" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Editar Usuario</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label fw-bold small">Nombre</label>
+              <input #nombre="ngModel" name="nombre" [(ngModel)]="usuario.nombre"
+                type="text" class="form-control bg-white" required pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"
+                [class.is-invalid]="nombre.invalid && nombre.touched"
+              />
+              <div class="invalid-feedback">
+                Ingresa un nombre valido
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold small">Apellido Paterno</label>
+              <input #apePaterno ="ngModel" name="apellidoPaterno" [(ngModel)]="usuario.apellidoPaterno"
+                type="text" class="form-control bg-white" required pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"                
+                [class.is-invalid]="apePaterno.invalid && apePaterno.touched"
+              />
+              <div class="invalid-feedback">
+                Ingresa un valor valido
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold small">Apellido Materno</label>
+              <input #apeMaterno = "ngModel" name="apellidoMaterno" [(ngModel)]="usuario.apellidoMaterno"
+                type="text" class="form-control bg-white" required pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"                
+                [class.is-invalid]="apeMaterno.invalid && apeMaterno.touched"
+              />
+              <div class="invalid-feedback">
+                Ingresa un valor valido
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-bold small">Username</label>
+              <input
+                #username
+                type="text"
+                class="form-control bg-white"
+                [value]="usuario.username"
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold small">Sexo</label>
+              <select #sexo class="form-select bg-white" [value]="usuario.sexo">
+                <option value="" disabled>Seleccione...</option>
+                <option value="H">Hombre</option>
+                <option value="M">Mujer</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-bold small">Correo</label>
+              <input #email = "ngModel" name="email" [(ngModel)]="usuario.email"
+               type="email" class="form-control bg-white"                
+               required pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+               [class.is-invalid]="email.invalid && email.touched"
+               />
+                 <div class="invalid-feedback">
+                Ingresa un valor valido
+              </div>
+            </div>
+          
+            <div class="col-md-4">
+              <label class="form-label fw-bold small">Teléfono</label>
+              <input #tel type="text" class="form-control bg-white" [value]="usuario.telefono" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold small">Celular</label>
+              <input #cel type="text" class="form-control bg-white" [value]="usuario.celular" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Cerrar</button>
+          <button
+            type="button"
+            class="btn btn-success"
+            data-bs-dismiss="modal"
+            (click)="
+              actualizarUsuario(
+                nombre.value,
+                apePaterno.value,
+                apeMaterno.value,
+                username.value,
+                sexo.value,
+                email.value,
+                tel.value,
+                cel.value
+              )
+            "
+          >
+            Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Direccion-->
+  <div class="modal fade" id="modalEditDireccion" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title">
+            {{ (direccionSubject | async) ? 'Editar Dirección' : 'Nueva Dirección' }}
+          </h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="modal"
+            (click)="limpiarModal()"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+          @let d = direccionSubject | async;
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Calle</label>
+              <input type="text" class="form-control" #calleDir [value]="d?.calle || ''" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Núm. Exterior</label>
+              <input type="text" class="form-control" #nExtDir [value]="d?.numeroExterior || ''" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Núm. Interior</label>
+              <input type="text" class="form-control" #nIntDir [value]="d?.numeroInterior || ''" />
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-bold">País</label>
+              <select class="form-select" [(ngModel)]="idPaisSel" (change)="onPaisChange($event)">
+                <option [value]="0">Seleccione País</option>
+                @for (p of paises; track p.idPais) {
+                  <option [value]="p.idPais">{{ p.nombre }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-bold">Estado</label>
+              <select
+                class="form-select"
+                [(ngModel)]="idEstadoSel"
+                (change)="onEstadoChange($event)"
+                [disabled]="estados.length === 0"
+              >
+                <option [value]="0">Seleccione Estado</option>
+                @for (e of estados; track e.idEstado) {
+                  <option [value]="e.idEstado">{{ e.nombre }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-bold">Municipio</label>
+              <select
+                class="form-select"
+                [(ngModel)]="idMunicipioSel"
+                (change)="onMunicipioChange($event)"
+                [disabled]="municipios.length === 0"
+              >
+                <option [value]="0">Seleccione Municipio</option>
+                @for (m of municipios; track m.idMunicipio) {
+                  <option [value]="m.idMunicipio">{{ m.nombre }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-bold">Colonia</label>
+              <select
+                class="form-select"
+                [(ngModel)]="idColoniaSel"
+                [disabled]="colonias.length === 0"
+              >
+                <option [value]="0">Seleccione Colonia</option>
+                @for (c of colonias; track c.idColonia) {
+                  <option [value]="c.idColonia">{{ c.nombre }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          @let u = usuarioSubject | async;
+          <button
+            type="button"
+            class="btn btn-secondary rounded-pill"
+            data-bs-dismiss="modal"
+            (click)="limpiarModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            class="btn btn-success rounded-pill px-4"
+            (click)="
+              guardarDireccion(
+                u!.idUsuario,
+                calleDir.value,
+                nIntDir.value,
+                nExtDir.value,
+                idColoniaSel.toString()
+              )
+            "
+          >
+            {{ d ? 'Actualizar' : 'Guardar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="container py-5 text-center">
+    <div
+      class="spinner-border text-primary-emphasis"
+      style="width: 3rem; height: 3rem"
+      role="status"
+    ></div>
+    <p class="mt-3 text-secondary animate-pulse">Obteniendo tus datos...</p>
+  </div>
+}

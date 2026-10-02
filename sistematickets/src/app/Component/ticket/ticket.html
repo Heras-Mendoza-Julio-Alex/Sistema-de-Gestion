@@ -1,0 +1,249 @@
+<div
+  class="container-fluid min-vh-100 d-flex justify-content-center align-items-start px-lg-5"
+  style="padding-top: 10vh"
+>
+  @if (ticketSubject | async; as ticket) {
+    <div class="row g-4 justify-content-center mx-auto w-100" style="max-width: 1600px">
+      <div class="col-12 col-lg-6">
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+          <div class="card-header bg-dark text-white py-3 px-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span class="badge bg-primary mb-2">Ticket #{{ ticket.idTicket }}</span>
+                <h3 class="mb-0 fw-bold">{{ ticket.titulo }}</h3>
+              </div>
+              <button class="btn btn-outline-light rounded-pill px-4" [routerLink]="['/tickets']">
+                <i class="bi bi-arrow-left me-2"></i>Regresar
+              </button>
+            </div>
+          </div>
+
+          <div class="card-body p-4">
+            <h6 class="text-uppercase text-muted small fw-bold mb-3">Descripción</h6>
+
+            <div
+              class="p-4 bg-light rounded-3 border-start border-4 border-primary mb-4 shadow-sm overflow-auto"
+              style="min-height: 180px; max-height: 250px"
+            >
+              <p class="fs-5 mb-0 text-dark" style="line-height: 1.6">{{ ticket.descripcion }}</p>
+            </div>
+
+            <div class="row g-3 align-items-center">
+              <div class="col-md-6">
+                <small class="text-muted fw-bold text-uppercase d-block mb-2"
+                  >Fecha de Reporte</small
+                >
+                <p class="text-dark fs-5 mb-0 fw-medium">
+                  <i class="bi bi-calendar3 me-2 text-primary"></i>{{ ticket.Fecha }}
+                </p>
+              </div>
+
+              <div class="col-md-6">
+                <div
+                  class="d-flex align-items-center p-3 bg-white rounded-4 border shadow-sm w-100"
+                  style="max-width: 350px"
+                >
+                  <i class="bi bi-person-badge fs-1 me-3 text-primary"></i>
+                  <div>
+                    <p class="mb-0 fw-bold text-dark fs-5">
+                      {{ ticket.usuario.nombre }} {{ ticket.usuario.apellidoPaterno }}
+                    </p>
+                    <small class="text-muted text-uppercase fw-semibold" style="font-size: 0.75rem">
+                      {{ ticket.usuario.Rol.nombre }}
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 mt-4 d-flex flex-wrap gap-4 pt-3 border-top">
+                <div class="d-flex align-items-center">
+                  <span class="fw-bold text-muted small me-2">ESTADO:</span>
+                  <span
+                    class="badge rounded-pill text-white px-4 py-2 fw-semibold shadow-sm"
+                    [ngClass]="{
+                      'bg-info': ticket.Estado.nombre.toLowerCase() === 'progreso',
+                      'bg-warning': ticket.Estado.nombre.toLowerCase() === 'abierto',
+                      'bg-success': ticket.Estado.nombre.toLowerCase() === 'resuelto',
+                      'bg-primary': ticket.Estado.nombre.toLowerCase() === 'cerrado',
+                    }"
+                  >
+                    {{ ticket.Estado.nombre }}
+                  </span>
+                </div>
+                <div class="d-flex align-items-center">
+                  <span class="fw-bold text-muted small me-2">PRIORIDAD:</span>
+                  <span
+                    class="badge px-4 py-2 text-white fw-bold shadow-sm"
+                    [ngClass]="{
+                      'bg-danger': ticket.Prioridad.nombre.toLowerCase() === 'alta',
+                      'bg-warning text-dark': ticket.Prioridad.nombre.toLowerCase() === 'media',
+                      'bg-success': ticket.Prioridad.nombre.toLowerCase() === 'baja',
+                    }"
+                  >
+                    {{ ticket.Prioridad.nombre }}
+                  </span>
+                </div>
+              </div>
+              <button
+                
+                class="btn btn-light rounded-pill px-4 shadow-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#editTicketModal"
+                (click)="abrirModal()"
+              >
+                <i class="bi bi-pencil-square me-2"></i>Editar ticket
+              </button>
+              <div class="modal fade" id="editTicketModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content border-0 rounded-4 shadow" *ngIf="ticketEdicion">
+                    <div class="modal-header bg-dark text-white rounded-top-4">
+                      <h5 class="modal-title fw-bold">
+                        Editar Ticket #{{ ticketEdicion.idTicket }}
+                      </h5>
+                      <button
+                        type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"
+                      ></button>
+                    </div>
+
+                    <div class="modal-body p-4">
+                      <div class="mb-3">
+                        <label class="form-label fw-bold text-muted small">TÍTULO</label>
+                        <input
+                          type="text"
+                          [(ngModel)]="ticketEdicion.titulo"
+                          name="titulo"
+                          class="form-control rounded-3 shadow-sm"
+                          [disabled]="true"
+                        />
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label fw-bold text-muted small">PRIORIDAD</label>
+                          <select
+                            [(ngModel)]="ticketEdicion.Prioridad.idPrioridad"
+                            name="prioridad"
+                            class="form-select rounded-3 shadow-sm"
+                            [disabled]="rolUsuario === 'Usuario'"
+                          >
+                            @for (p of prioridades(); track p.idPrioridad) {
+                              <option [value]="p.idPrioridad">{{ p.nombre }}</option>
+                            }
+                          </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label fw-bold text-muted small">ESTADO</label>
+                          <select
+                            [(ngModel)]="ticketEdicion.Estado.idEstado"
+                            name="estado"
+                            class="form-select rounded-3 shadow-sm"
+                            [disabled]="rolUsuario === 'Usuario'"
+                          >
+                            @for (e of estados(); track e.idEstado) {
+                              <option [value]="e.idEstado">{{ e.nombre }}</option>
+                            }
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label fw-bold text-muted small">DESCRIPCIÓN</label>
+                        <textarea
+                          [(ngModel)]="ticketEdicion.descripcion"
+                          name="descripcion"
+                          class="form-control rounded-3 shadow-sm"
+                          rows="3"
+                        ></textarea>
+                      </div>
+                    </div>
+
+                    <div class="modal-footer border-0 p-4 pt-0">
+                      <button
+                        type="button"
+                        class="btn btn-light rounded-pill px-4"
+                        data-bs-dismiss="modal"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm"
+                        (click)="guardarCambios()"
+                        data-bs-dismiss="modal"
+                      >
+                        Actualizar Ticket
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-6">
+        <div class="card shadow-lg border-0 rounded-4">
+          <div class="card-header bg-white py-3 px-4 border-bottom">
+            <h4 class="mb-0 fw-bold text-dark">Comentarios</h4>
+          </div>
+
+          <div class="card-body p-4 d-flex flex-column">
+            <div class="mb-3">
+              <textarea
+                #inputComentario
+                (input)="(0)"
+                class="form-control border-0 shadow-none bg-light p-4"
+                rows="5"
+                placeholder="Escribe un comentario detallado..."
+                style="resize: none; border-radius: 18px; font-size: 1.1rem; border: 1px solid #eee"
+              ></textarea>
+              <div class="d-flex justify-content-end mt-3">
+                <button
+                  type="button"
+                  class="btn btn-primary rounded-pill px-5 py-2 fw-bold shadow-sm"
+                  [disabled]="!inputComentario.value.trim()"
+                  (click)="agregarComentario(inputComentario.value); inputComentario.value = ''"
+                >
+                  Publicar Comentario
+                </button>
+              </div>
+            </div>
+
+            <hr class="my-4 opacity-25" />
+
+            <div class="pe-2 overflow-auto flex-grow-1" style="max-height: 25.5vh">
+              @for (comentario of comentariosSubject | async; track comentario.idComentario) {
+                <div class="mb-3 p-3 border-bottom border-light">
+                  <div class="d-flex align-items-center mb-2">
+                    <i class="bi bi-person-circle me-2 text-primary fs-5"></i>
+                    <span class="fw-bold text-dark">
+                      {{ comentario.usuario.nombre }}
+                      <small class="text-muted fw-normal ms-2"
+                        >| {{ comentario.usuario.Rol.nombre }}</small
+                      >
+                    </span>
+                  </div>
+                  <p
+                    class="mb-0 text-secondary ps-4"
+                    style="white-space: pre-line; font-size: 0.95rem"
+                  >
+                    {{ comentario.contenido }}
+                  </p>
+                </div>
+              } @empty {
+                <div class="text-center py-5">
+                  <i class="bi bi-chat-left-text text-muted fs-1 opacity-25 d-block mb-3"></i>
+                  <p class="text-muted mb-0">No hay comentarios aún.</p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

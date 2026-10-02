@@ -1,0 +1,159 @@
+<div class="container mt-5">
+  <div class="d-flex align-items-center justify-content-between bg-white p-3 rounded-4 shadow-sm">
+    <div class="d-flex align-items-center gap-4">
+      <div>
+        <h2 class="fw-bold mb-0 text-dark">Catálogo de Productos</h2>
+        <p class="text-muted small mb-0">Gestión de inventario y precios</p>
+      </div>
+
+      <button class="btn btn-outline-warning rounded-pill px-3" [routerLink]="['/anadirproducto']">
+        <i class="bi bi-plus-circle me-1"></i> Añadir Producto
+      </button>
+      <button
+        class="btn btn-outline-success rounded-pill px-4 shadow-sm"
+        [routerLink]="['/usuarios']"
+      >
+        <i class="bi bi-people-fill"></i> Ir a Usuarios
+      </button>
+      <button
+        class="btn btn-outline-primary rounded-pill px-4 shadow-sm"
+        [routerLink]="['/detalleventa']"
+      >
+        <i class="bi bi-journal-medical"></i> Ir a detalles Ventas
+      </button>
+    </div>
+
+    <i class="bi bi-box-seam fs-1 text-primary opacity-25"></i>
+  </div>
+
+  <div class="card shadow-sm border-0 rounded-4 overflow-hidden mt-4">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light">
+          <tr>
+            <th class="py-3 text-center" style="width: 100px">Acción</th>
+            <th class="py-3 text-center" style="width: 80px">Imagen</th>
+            <th class="py-3">Producto</th>
+            <th class="py-3 text-center">Precio</th>
+            <th class="py-3 text-center">Stock</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (producto of productosPaginados(); track producto.idProducto) {
+            <tr>
+              <td class="text-center">
+                <div class="d-flex justify-content-center gap-2">
+                  <button
+                    class="btn btn-outline-warning btn-sm rounded-pill px-3 shadow-sm"
+                    [routerLink]="['/productos', producto.idProducto]"
+                    title="Editar Producto"
+                  >
+                    <i class="bi bi-pencil-square me-1"></i>Editar
+                  </button>
+                  <button
+                    class="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center"
+                    (click)="confirmarEliminacion(producto.idProducto)"
+                    title="Borrar Usuario"
+                  >
+                    <i class="bi bi-trash3-fill me-1"></i> Borrar
+                  </button>
+                </div>
+              </td>
+
+              <td class="text-center">
+                <div
+                  class="d-flex align-items-center justify-content-center bg-light rounded-3"
+                  style="width: 50px; height: 50px; overflow: hidden; margin: 0 auto"
+                >
+                  @if (producto.imagen) {
+                    <img
+                      [src]="'data:image/png;base64,' + producto.imagen"
+                      alt="{{ producto.nombre }}"
+                      class="img-fluid object-fit-contain w-100 h-100"
+                    />
+                  } @else {
+                    <i class="bi bi-box-seam text-secondary fs-5"></i>
+                  }
+                </div>
+              </td>
+
+              <td>
+                <div class="fw-bold text-dark">{{ producto.nombre }}</div>
+              </td>
+              <td class="text-center">
+                <span class="fw-bold text-success"> ${{ producto.precio }} </span>
+              </td>
+              <td class="text-center">
+                <span
+                  class="badge rounded-pill px-3"
+                  [ngClass]="{
+                    'bg-danger-subtle text-danger': +producto.stock <= 5,
+                    'bg-success-subtle text-success': +producto.stock > 5,
+                  }"
+                >
+                  <i class="bi bi-stack me-1"></i> {{ producto.stock }} unidades
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-center py-5 text-muted">
+                <i class="bi bi-search fs-2 d-block mb-2"></i>
+                No se encontraron productos disponibles.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (productos().length > itemsPorPagina()) {
+      <div
+        class="card-footer bg-white border-top d-flex align-items-center justify-content-between p-3"
+      >
+        <span class="text-muted small">
+          Mostrando página <b>{{ paginaActual() }}</b> de <b>{{ totalPaginas() }}</b> (Total:
+          {{ productos().length }} productos)
+        </span>
+
+        <nav>
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item" [class.disabled]="paginaActual() === 1">
+              <button
+                class="page-item btn btn-sm btn-light border rounded-start-pill px-3"
+                (click)="cambiarPagina(paginaActual() - 1)"
+              >
+                Anterior
+              </button>
+            </li>
+
+            @for (num of arrayPaginas(); track num) {
+              <li class="page-item mx-1" [class.active]="paginaActual() === num">
+                <button
+                  class="page-link rounded-3 fw-bold"
+                  [ngClass]="
+                    paginaActual() === num
+                      ? 'bg-primary text-white border-primary'
+                      : 'text-dark bg-white'
+                  "
+                  (click)="cambiarPagina(num)"
+                >
+                  {{ num }}
+                </button>
+              </li>
+            }
+
+            <li class="page-item" [class.disabled]="paginaActual() === totalPaginas()">
+              <button
+                class="page-item btn btn-sm btn-light border rounded-end-pill px-3"
+                (click)="cambiarPagina(paginaActual() + 1)"
+              >
+                Siguiente
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    }
+  </div>
+</div>

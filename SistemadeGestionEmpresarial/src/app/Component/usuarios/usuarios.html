@@ -1,0 +1,163 @@
+<div class="container mt-5">
+  <div
+    class="d-flex justify-content-between align-items-center bg-white p-4 mb-4 rounded-4 shadow-sm border-start border-success border-5"
+  >
+    <div class="d-flex align-items-center gap-4">
+      <div>
+        <h2 class="fw-bold mb-0 text-dark">Información de Usuarios</h2>
+        <p class="text-muted small mb-0">Gestión y visualización de cuentas activas</p>
+      </div>
+
+      <button
+        class="btn btn-outline-warning rounded-pill px-4 shadow-sm"
+        [routerLink]="['/productos']"
+      >
+        <i class="bi bi-box-seam me-2"></i>Ir a Productos
+      </button>
+      <button
+        class="btn btn-outline-primary rounded-pill px-4 shadow-sm"
+        [routerLink]="['/detalleventa']"
+      >
+        <i class="bi bi-journal-medical"></i> Ir a detalles Ventas
+      </button>
+    </div>
+    
+    <i class="bi bi-people-fill fs-1 text-success opacity-25"></i>
+  </div>
+
+  <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light">
+          <tr>
+            <th class="py-3 text-center" style="width: 100px">Acciones</th>
+            <th class="py-3">Nombre Completo</th>
+            <th class="py-3">Contacto y Rol</th>
+            <th class="py-3">Estatus</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (usuario of usuariosPaginados(); track usuario.idUsuario) {
+            <tr>
+              <td class="text-center">
+                <div class="d-flex justify-content-center gap-2">
+                  <button
+                    class="btn btn-outline-warning btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center"
+                    [routerLink]="['/usuarios', usuario.idUsuario]"
+                    title="Editar Usuario"
+                  >
+                    <i class="bi bi-pencil-fill me-1"></i> Editar
+                  </button>
+
+                  @if (!EsconderBoton()) {
+                    <button
+                      class="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center"
+                      (click)="confirmarEliminacion(usuario.idUsuario)"
+                      title="Borrar Usuario"
+                    >
+                      <i class="bi bi-trash3-fill me-1"></i> Borrar
+                    </button>
+                  }
+                </div>
+              </td>
+              <td>
+                <div class="fw-bold text-dark">
+                  {{ usuario.nombre }} {{ usuario.apellidoPaterno }} {{ usuario.apellidoMaterno }}
+                </div>
+                <div class="badge bg-light text-secondary border-0 fw-normal">
+                  <i class="bi bi-person me-1"></i>{{ usuario.usuario }}
+                </div>
+              </td>
+              <td>
+                <div class="d-flex flex-column gap-1">
+                  <span class="small text-muted">
+                    <i class="bi bi-envelope-at me-2 text-primary"></i>{{ usuario.email }}
+                  </span>
+                  <span class="small text-muted">
+                    <i class="bi bi-telephone-fill me-2 text-primary"></i>{{ usuario.telefono }}
+                  </span>
+                  <span class="badge bg-success-subtle text-success border-0 align-self-start px-2">
+                    {{ usuario.rol.nombre }}
+                  </span>
+                </div>
+              </td>
+              <td>
+                <div class="form-check form-switch d-inline-block">
+                  <input
+                    class="form-check-input custom-switch"
+                    type="checkbox"
+                    role="switch"
+                    [id]="'switch' + usuario.idUsuario"
+                    [checked]="usuario.estatus === 1"
+                    (change)="bajalogica(usuario.idUsuario, usuario.estatus)"
+                  />
+                  <label
+                    class="form-check-label small text-secondary"
+                    [for]="'switch' + usuario.idUsuario"
+                  >
+                    {{ usuario.estatus === 1 ? 'Activo' : 'Inactivo' }}
+                  </label>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="text-center py-5 text-muted">
+                No se encontraron usuarios registrados.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (usuarios().length > itemsPorPagina()) {
+      <div
+        class="card-footer bg-white border-top d-flex align-items-center justify-content-between p-3"
+      >
+        <span class="text-muted small">
+          Mostrando página <b>{{ paginaActual() }}</b> de <b>{{ totalPaginas() }}</b> (Total:
+          {{ usuarios().length }} usuarios)
+        </span>
+
+        <nav>
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item" [class.disabled]="paginaActual() === 1">
+              <button
+                class="page-item btn btn-sm btn-light border rounded-start-pill px-3"
+                (click)="cambiarPagina(paginaActual() - 1)"
+              >
+                Anterior
+              </button>
+            </li>
+
+            @for (num of arrayPaginas(); track num) {
+              <li class="page-item mx-1" [class.active]="paginaActual() === num">
+                <button
+                  class="page-link rounded-3 fw-bold"
+                  [ngClass]="
+                    paginaActual() === num
+                      ? 'bg-primary text-white border-primary'
+                      : 'text-dark bg-white'
+                  "
+                  (click)="cambiarPagina(num)"
+                >
+                  {{ num }}
+                </button>
+              </li>
+            }
+
+            <li class="page-item" [class.disabled]="paginaActual() === totalPaginas()">
+              <button
+                class="page-item btn btn-sm btn-light border rounded-end-pill px-3"
+                (click)="cambiarPagina(paginaActual() + 1)"
+              >
+                Siguiente
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    }
+  </div>
+</div>

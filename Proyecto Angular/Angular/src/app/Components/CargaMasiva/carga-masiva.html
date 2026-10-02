@@ -1,0 +1,152 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-10">
+      <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 mb-5 bg-white text-center">
+        <h1 class="display-5 fw-bold text-dark mb-5">Carga Masiva</h1>
+
+        <div class="row g-4 mb-5 text-center">
+          <div class="col-md-6">
+            <div
+              class="card h-100 border-2 border-success border-opacity-25 bg-success bg-opacity-10 py-4 px-3"
+              role="button"
+              data-bs-toggle="modal"
+              data-bs-target="#ExcelModal"
+            >
+              <div class="card-body text-success">
+                <i class="bi bi-file-earmark-excel-fill display-3"></i>
+                <h3 class="h5 mt-3 fw-bold">Excel</h3>
+                <p class="small mb-0 text-muted">Subir archivo formato .xlsx</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div
+              class="card h-100 border-2 border-primary border-opacity-25 bg-primary bg-opacity-10 py-4 px-3"
+              role="button"
+              data-bs-toggle="modal"
+              data-bs-target="#TXTModal"
+            >
+              <div class="card-body text-primary">
+                <i class="bi bi-file-earmark-text-fill display-3"></i>
+                <h3 class="h5 mt-3 fw-bold">TXT</h3>
+                <p class="small mb-0 text-muted">Subir archivo formato .txt</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button [routerLink]="['/']" class="btn btn-outline-secondary btn-lg px-5 shadow-sm">
+          <i class="bi bi-arrow-left me-2"></i>Volver al inicio
+        </button>
+
+        @if (tokenGenerado || listaErrores.length > 0) {
+          <div class="mt-5 text-start">
+            <hr class="mb-5 text-muted" />
+
+            @if (tokenGenerado && listaErrores.length === 0) {
+              <div
+                class="alert alert-success d-flex align-items-center justify-content-between p-4 rounded-3 border-0 shadow-sm"
+              >
+                <div>
+                  <h4 class="alert-heading mb-1 fw-bold">
+                    <i class="bi bi-check-circle-fill me-2"></i>¡Archivo válido!
+                  </h4>
+                  <p class="mb-0">Archivo Correct</p>
+                </div>
+                <button
+                  class="btn btn-success btn-lg px-4 rounded-pill shadow-sm"
+                  (click)="confirmarProcesar()"
+                >
+                  <i class="bi bi-cloud-upload-fill me-2"></i>Procesar Registros
+                </button>
+              </div>
+            }
+
+            @if (listaErrores.length > 0) {
+              <div class="alert alert-danger border-0 shadow-sm mb-4 text-start">
+                <i class="bi bi-exclamation-octagon-fill me-2"></i>
+                <strong>Se encontraron {{ listaErrores.length }} errores en el archivo</strong>
+              </div>
+
+              <div class="table-responsive rounded-3 shadow-sm">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-dark">
+                    <tr>
+                      <th class="px-4" style="width: 100px">Línea</th>
+                      <th style="width: 200px">Campo</th>
+                      <th>Descripción del Error</th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white">
+                    @for (error of listaErrores; track $index) {
+                      <tr>
+                        <td class="px-4 fw-bold text-muted text-start">
+                          <span class="badge bg-secondary rounded-pill">{{ error.Linea }}</span>
+                        </td>
+                        <td class="text-start">
+                          <code class="text-primary fw-bold">{{ error.Campo }}</code>
+                        </td>
+                        <td class="text-danger fw-semibold text-start">
+                          {{ error.Descripcion }}
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ExcelModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title fw-bold">Cargar Archivo Excel</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <label class="form-label text-muted small fw-bold">SELECCIONE EL ARCHIVO .XLSX</label>
+        <input type="file" class="form-control" (change)="onFileChange($event)" accept=".xlsx" />
+      </div>
+      <div class="modal-footer border-0">
+        <button
+          class="btn btn-success w-100 py-2 fw-bold"
+          (click)="subirArchivo()"
+          data-bs-dismiss="modal"
+        >
+          <i class="bi bi-upload me-2"></i>Validar Archivo
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="TXTModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold">Cargar Archivo de Texto</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <label class="form-label text-muted small fw-bold">SELECCIONE EL ARCHIVO .TXT</label>
+        <input type="file" class="form-control" (change)="onFileChange($event)" accept=".txt" />
+      </div>
+      <div class="modal-footer border-0">
+        <button
+          class="btn btn-primary w-100 py-2 fw-bold"
+          (click)="subirArchivo()"
+          data-bs-dismiss="modal"
+        >
+          <i class="bi bi-upload me-2"></i>Validar Archivo
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

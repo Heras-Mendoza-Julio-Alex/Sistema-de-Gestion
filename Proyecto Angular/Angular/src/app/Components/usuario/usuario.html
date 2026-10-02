@@ -1,0 +1,161 @@
+<div class="container mt-5">
+  <div class="bg-success text-white py-3 mb-4 rounded-3 shadow-sm text-center">
+    <h2 class="fw-bold mb-0">Información de Usuarios</h2>
+  </div>
+
+  <div class="d-flex align-items-center mb-3">
+    <button class="btn btn-success rounded-pill px-4 shadow-sm" [routerLink]="['/usuarioform']">
+      <i class="bi bi-person-plus-fill me-2"></i>Añadir Usuario
+    </button>
+    <button class="btn btn-primary rounded-pill px-4 shadow-sm" [routerLink]="['/cargamasiva']">
+      <i class="bi bi-journal-plus"></i> Carga Masiva
+    </button>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label fw-bold small text-muted">Nombre</label>
+        <input #nom type="text" class="form-control rounded-pill" placeholder="Nombre..." />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label fw-bold small text-muted">A. Paterno</label>
+        <input #pat type="text" class="form-control rounded-pill" placeholder="Paterno..." />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label fw-bold small text-muted">A. Materno</label>
+        <input #mat type="text" class="form-control rounded-pill" placeholder="Materno..." />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label fw-bold small text-muted">Rol</label>
+        <select #rolId class="form-select rounded-pill">
+          <option value="">Todos los roles</option>
+          @for (rol of roles(); track rol.idRol) {
+            <option [value]="rol.idRol">{{ rol.nombre }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-12 d-flex justify-content-end gap-2">
+        <button
+          class="btn btn-outline-secondary rounded-pill px-4"
+          (click)="nom.value = ''; pat.value = ''; mat.value = ''; rolId.value = ''; getAll()"
+        >
+          Limpiar
+        </button>
+        <button
+          class="btn btn-dark rounded-pill px-5"
+          (click)="buscarDinamico(nom.value, pat.value, mat.value, rolId.value)"
+        >
+          <i class="bi bi-search me-2"></i>Buscar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-success">
+          <tr class="text-center">
+            <th class="py-3">Acción</th>
+            <th class="py-3">Imagen</th>
+            <th class="py-3 text-start">Nombre</th>
+            <th class="py-3 text-start">Información</th>
+            <th class="py-3 text-start">Direcciones</th>
+            <th class="py-3">Estatus</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (usuario of usuarios(); track usuario.idUsuario) {
+            <tr class="text-center">
+              <td>
+                <div class="btn-group shadow-sm" role="group">
+                  <button
+                    class="btn btn-danger btn-sm p-2"
+                    (click)="deleteUsuario(usuario.idUsuario)"
+                  >
+                    <i class="bi bi-trash-fill"></i>
+                  </button>
+                  <button
+                    class="btn btn-warning btn-sm p-2"
+                    [routerLink]="['/', usuario.idUsuario]"
+                  >
+                    <i class="bi bi-pencil-fill px-1"></i>
+                  </button>
+
+                  <!-- <button
+                    class="btn btn-info btn-sm p-2 text-white"
+                    (click)="bajalogica(usuario.idUsuario, 2)"
+                  >
+                    <i class="bi bi-person-vcard-fill px-1"></i>
+                  </button> -->
+                </div>
+              </td>
+
+              <td>
+                <img
+                  [src]="
+                    usuario.imagen
+                      ? 'data:image/png;base64,' + usuario.imagen
+                      : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNT31I-b-Jdf8bjPM-mm-V1qCpb-oudRLvtw&s'
+                  "
+                  alt="Imagen usuario"
+                  style="width: 50px; height: 50px"
+                />
+              </td>
+
+              <td class="text-start">
+                <p class="fw-bold mb-0 text-dark">
+                  {{ usuario.nombre }} {{ usuario.apellidoPaterno }} {{ usuario.apellidoMaterno }}
+                </p>
+                <small class="text-muted text-uppercase" style="font-size: 0.7rem">{{
+                  usuario.username
+                }}</small>
+              </td>
+
+              <td class="text-start">
+                <div class="d-flex flex-column gap-1 small">
+                  <span
+                    ><i class="bi bi-envelope-at me-2 text-primary"></i>{{ usuario.email }}</span
+                  >
+                  <span><i class="bi bi-phone me-2 text-success"></i>{{ usuario.celular }}</span>
+                  <span class="badge bg-secondary-subtle text-dark border align-self-start">{{
+                    usuario.rol.nombre
+                  }}</span>
+                </div>
+              </td>
+
+              <td class="text-start">
+                @if (usuario.Direcciones && usuario.Direcciones.length > 0) {
+                  <div class="small">
+                    @for (dir of usuario.Direcciones; track dir.idDireccion) {
+                      <div class="text-nowrap">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ dir.calle }}
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <span class="text-muted small italic">N/A</span>
+                }
+              </td>
+
+              <td>
+                <div class="form-check form-switch d-inline-block">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    [checked]="usuario.estatus === 1"
+                    (change)="onChangeEstatus($event, usuario)"
+                    style="cursor: pointer; transform: scale(1.2)"
+                  />
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

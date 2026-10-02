@@ -1,0 +1,17 @@
+@if (usuarioId() && rutaActual() !== '/login') {
+  <header>
+    <div style="display: flex; gap: 15px; padding: 10px; background: #222; color: #fff; align-items: center;">
+      <strong>SISTEMA TICKETS</strong>
+      
+      <span>ID: {{ usuarioId() }}</span>
+      <span>Correo: {{ correo() }}</span>
+      <span>Rol: {{ rol() }}</span>
+
+      <button (click)="onSalir()" style="margin-left: auto;">Cerrar Sesión</button>
+    </div>
+  </header>
+}
+
+<main>
+  <router-outlet></router-outlet>
+</main>

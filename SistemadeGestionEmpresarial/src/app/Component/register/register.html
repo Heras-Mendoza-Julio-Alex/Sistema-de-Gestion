@@ -1,0 +1,136 @@
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-dark text-white text-center py-4 rounded-top-4">
+          <h3 class="mb-0 fw-bold">Crear Cuenta</h3>
+          <p class="text-secondary small mb-0">Regístrato</p>
+        </div>
+
+        <div class="card-body p-4">
+          <form [formGroup]="usuarioForm" (ngSubmit)="registrar()">
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-secondary small">
+                <i class="bi bi-person-badge"></i> Usuario
+              </label>
+              <input
+                type="text"
+                formControlName="usuario"
+                class="form-control rounded-3 py-2 shadow-sm"
+                [class.is-invalid]="
+                  usuarioForm.get('usuario')?.touched && usuarioForm.get('usuario')?.invalid
+                "
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-secondary small">
+                <i class="bi bi-person me-1"></i> Nombre(S)
+              </label>
+              <input
+                type="text"
+                formControlName="nombre"
+                class="form-control rounded-3 py-2 shadow-sm"
+                [class.is-invalid]="
+                  usuarioForm.get('nombre')?.touched && usuarioForm.get('nombre')?.invalid
+                "
+              />
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold text-secondary small">Apellido Paterno</label>
+                <input
+                  type="text"
+                  formControlName="apellidoPaterno"
+                  class="form-control rounded-3 py-2 shadow-sm"
+                  [class.is-invalid]="
+                    usuarioForm.get('apellidoPaterno')?.touched &&
+                    usuarioForm.get('apellidoPaterno')?.invalid
+                  "
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold text-secondary small">Apellido Materno</label>
+                <input
+                  type="text"
+                  formControlName="apellidoMaterno"
+                  class="form-control rounded-3 py-2 shadow-sm"
+                  [class.is-invalid]="
+                    usuarioForm.get('apellidoMaterno')?.touched &&
+                    usuarioForm.get('apellidoMaterno')?.invalid
+                  "
+                />
+              </div>
+            </div>
+
+             <div class="mb-4">
+              <label class="form-label fw-semibold text-secondary small">
+                <i class="bi bi-telephone-fill me-1"></i> Telefono
+              </label>
+              <input
+                type="number"
+                formControlName="telefono"
+                class="form-control rounded-3 py-2 shadow-sm"
+                [class.is-invalid]="
+                  usuarioForm.get('telefono')?.touched && usuarioForm.get('telefono')?.invalid
+                "
+              />
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-secondary small">
+                <i class="bi bi-envelope me-1"></i> Correo Electrónico
+              </label>
+              <input
+                type="email"
+                formControlName="email"
+                class="form-control rounded-3 py-2 shadow-sm"
+                [class.is-invalid]="
+                  usuarioForm.get('email')?.touched && usuarioForm.get('email')?.invalid
+                "
+              />
+            </div>            
+
+            <div class="mb-4">
+              <label class="form-label fw-semibold text-secondary small">
+                <i class="bi bi-lock me-1"></i> Contraseña
+              </label>
+              <input
+                type="password"
+                formControlName="contrasena"
+                class="form-control rounded-3 py-2 shadow-sm"
+                [class.is-invalid]="
+                  usuarioForm.get('contrasena')?.touched && usuarioForm.get('contrasena')?.invalid
+                "
+              />
+            </div>
+
+            <div class="d-grid gap-3">
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm py-2"
+                [disabled]="usuarioForm.invalid || cargando"
+              >
+                @if (cargando) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                  Procesando...
+                } @else {
+                  Registrarme
+                }
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-outline-secondary rounded-pill py-2 fw-bold border-0"
+                [routerLink]="['/login']"
+              >
+                Volver
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

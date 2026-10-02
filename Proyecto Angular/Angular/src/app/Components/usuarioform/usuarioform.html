@@ -1,0 +1,268 @@
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-success text-white">
+      <h4 class="mb-0">Registro de Usuario</h4>
+    </div>
+
+    <div class="card-body">
+      <form [formGroup]="usuarioform" (ngSubmit)="onSubmit()">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Nombre</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nombre"
+              [class.is-invalid]="
+                usuarioform.get('nombre')?.touched && usuarioform.get('nombre')?.invalid
+              "
+            />
+            <div class="invalid-feedback">Solo letras y campo obligatorio</div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Apellido Paterno</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="apellidoPaterno"
+              [class.is-invalid]="
+                usuarioform.get('apellidoPaterno')?.touched &&
+                usuarioform.get('apellidoPaterno')?.invalid
+              "
+            />
+            <div class="invalid-feedback">Solo letras y campo obligatorio</div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Apellido Materno</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="apellidoMaterno"
+              [class.is-invalid]="
+                usuarioform.get('apellidoMaterno')?.touched &&
+                usuarioform.get('apellidoMaterno')?.invalid
+              "
+            />
+            <div class="invalid-feedback">Solo letras y campo obligatorio</div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              formControlName="email"
+              [class.is-invalid]="
+                usuarioform.get('email')?.touched && usuarioform.get('email')?.invalid
+              "
+            />
+            <div class="invalid-feedback">Email inválido o vacío</div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Teléfono</label>
+            <input
+              type="tel"
+              class="form-control"
+              formControlName="telefono"
+              [class.is-invalid]="
+                usuarioform.get('telefono')?.touched && usuarioform.get('telefono')?.invalid
+              "
+            />
+            <div class="invalid-feedback">Ingrese un numero valido</div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Celular</label>
+            <input
+              type="tel"
+              class="form-control"
+              formControlName="celular"
+              [class.is-invalid]="
+                usuarioform.get('celular')?.touched && usuarioform.get('celular')?.invalid
+              "
+            />
+            <div class="invalid-feedback">Ingrese un numero valido</div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">CURP</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="curp"
+              [class.is-invalid]="
+                usuarioform.get('curp')?.touched && usuarioform.get('curp')?.invalid
+              "
+            />
+            <div class="invalid-feedback">Ingrese una curp valida</div>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Fecha de Nacimiento</label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="fechanacimiento"
+              [class.is-invalid]="
+                usuarioform.get('fechanacimiento')?.touched &&
+                usuarioform.get('fechanacimiento')?.invalid
+              "
+            />
+            <div class="invalid-feedback">Campo obligatorio</div>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Sexo</label>
+            <select
+              class="form-select"
+              formControlName="sexo"
+              [class.is-invalid]="
+                usuarioform.get('sexo')?.touched && usuarioform.get('sexo')?.invalid
+              "
+            >
+              <option value="">Seleccione...</option>
+              <option value="H">Hombre</option>
+              <option value="M">Mujer</option>
+            </select>
+            <div class="invalid-feedback">Selecciona una opción</div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Username</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="username"
+              [class.is-invalid]="
+                usuarioform.get('username')?.touched && usuarioform.get('username')?.invalid
+              "
+            />
+            <div class="invalid-feedback">Campo obligatorio</div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Password</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="password"
+              [class.is-invalid]="
+                usuarioform.get('password')?.touched && usuarioform.get('password')?.invalid
+              "
+            />
+            <div class="invalid-feedback">Mínimo 6 caracteres</div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Imagen de Perfil</label>
+            <input
+              type="file"
+              id="imagen"
+              class="form-control"
+              (change)="onFileSelected($event)"
+              accept="image/*"
+            />
+          </div>
+
+          <div class="col-12 mt-4">
+            <div class="bg-success text-white p-2 rounded-2 mb-3 shadow-sm text-center">
+              <h5 class="mb-0"><i class="bi bi-geo-alt-fill me-2"></i>Ubicación</h5>
+            </div>
+          </div>
+
+          <div class="row g-3 mt-2">
+            <div class="col-md-6">
+              <label class="form-label">Calle</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="calle"
+              />
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label">Núm. Exterior</label>
+              <input type="text" class="form-control" formControlName="numeroExterior" />
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label">Núm. Interior</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="numeroInterior"
+              />
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label fw-bold">País</label>
+            <select class="form-select" formControlName="idPais" (change)="onPaisChange($event)">
+              <option value="0">Seleccione País</option>
+              @for (p of paises; track p.idPais) {
+                <option [value]="p.idPais">{{ p.nombre }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label fw-bold">Estado</label>
+            <select
+              class="form-select"
+              formControlName="idEstado"
+              (change)="onEstadoChange($event)"
+              [disabled]="estados.length === 0"
+            >
+              <option value="0">Seleccione Estado</option>
+              @for (e of estados; track e.idEstado) {
+                <option [value]="e.idEstado">{{ e.nombre }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label fw-bold">Municipio</label>
+            <select
+              class="form-select"
+              formControlName="idMunicipio"
+              (change)="onMunicipioChange($event)"
+              [disabled]="municipios.length === 0"
+            >
+              <option value="0">Seleccione Municipio</option>
+              @for (m of municipios; track m.idMunicipio) {
+                <option [value]="m.idMunicipio">{{ m.nombre }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label fw-bold">Colonia</label>
+            <select
+              class="form-select"
+              formControlName="idColonia"
+              [disabled]="colonias.length === 0"
+              [class.is-invalid]="
+                usuarioform.get('idColonia')?.touched && usuarioform.get('idColonia')?.invalid
+              "
+            >
+              <option value="0">Seleccione Colonia</option>
+              @for (c of colonias; track c.idColonia) {
+                <option [value]="c.idColonia">{{ c.nombre }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+          <button type="submit" class="btn btn-success" [disabled]="usuarioform.invalid">
+            Guardar Usuario
+          </button>
+          <button type="button" [routerLink]="['/']" class="btn btn-secondary">Regresar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

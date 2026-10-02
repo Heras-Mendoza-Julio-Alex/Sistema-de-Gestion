@@ -1,0 +1,100 @@
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh">
+  <div class="col-md-5">
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+      <div class="card-header bg-dark text-white p-4 text-center">
+        <i class="bi bi-person-lock display-4 mb-2"></i>
+        <h2 class="h4 mb-0 fw-bold">Iniciar Sesión</h2>
+      </div>
+
+      <div class="card-body p-4">
+        @if (errorMensaje) {
+          <div
+            class="alert alert-danger d-flex align-items-center border-0 rounded-3 mb-4 shadow-sm"
+            role="alert"
+          >
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <div class="small fw-bold">{{ errorMensaje }}</div>
+          </div>
+        }
+
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+          <div class="mb-3">
+            <label class="form-label fw-bold small text-uppercase text-secondary"
+              >Correo Electrónico</label
+            >
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0">
+                <i class="bi bi-envelope"></i>
+              </span>
+              <input
+                type="email"
+                formControlName="email"
+                placeholder="correo@ejemplo.com"
+                class="form-control bg-light border-start-0 shadow-none"
+                [ngClass]="{
+                  'is-invalid':
+                    loginForm.get('email')?.invalid &&
+                    (loginForm.get('email')?.touched || submitted),
+                }"
+              />
+            </div>
+            @if (
+              loginForm.get('email')?.invalid && (loginForm.get('email')?.touched || submitted)
+            ) {
+              <div class="text-danger small mt-1">Ingresa un correo válido.</div>
+            }
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold small text-uppercase text-secondary">Contraseña</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0">
+                <i class="bi bi-key"></i>
+              </span>
+              <input
+                type="password"
+                formControlName="contrasena"
+                placeholder="••••••••"
+                class="form-control bg-light border-start-0 shadow-none"
+                [ngClass]="{
+                  'is-invalid':
+                    loginForm.get('contrasena')?.invalid &&
+                    (loginForm.get('contrasena')?.touched || submitted),
+                }"
+              />
+            </div>
+            @if (
+              loginForm.get('contrasena')?.invalid &&
+              (loginForm.get('contrasena')?.touched || submitted)
+            ) {
+              <div class="text-danger small mt-1">Ingresa una contraseña válida.</div>
+            }
+          </div>
+
+          <div class="d-grid gap-2 mt-4">
+            <button
+              type="submit"
+              class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm"
+              [disabled]="cargando"
+            >
+              @if (cargando) {
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                Cargando...
+              } @else {
+                Iniciar Sesión
+              }
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-outline-secondary w-100 rounded-pill py-2 fw-bold border-0"
+              [routerLink]="['/registro']"
+            >
+              Registrarse
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
